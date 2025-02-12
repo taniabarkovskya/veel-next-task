@@ -1,17 +1,28 @@
 "use client";
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import cn from "classnames";
+import { Id } from "react-toastify";
 import { createTodo } from "../services/todos";
 import { Todo } from "../types/Todo";
+import { TodoCreate } from "../types/TodoCreate";
 
 type Props = {
-  todos: Todo[];
+  todos: Todo[] | undefined;
   tempTodo: Todo | null;
   setTempTodo: Dispatch<SetStateAction<Todo | null>>;
-  setTodos: Dispatch<SetStateAction<Todo[]>>
-}
+  notify: (text: string) => Id;
+  notifyError: (text: string) => Id;
+};
 
-const TodoForm: React.FC<Props> = props => {
-  const { todos, tempTodo, setTempTodo, setTodos } = props;
+const TodoForm: React.FC<Props> = (props) => {
+  const { todos, tempTodo, setTempTodo, notify, notifyError } = props;
   const [todoTitle, setTodoTitle] = useState("");
   const normalizedTitle = todoTitle.trim();
 
@@ -21,24 +32,37 @@ const TodoForm: React.FC<Props> = props => {
     if (inputNameRef.current) {
       inputNameRef.current.focus();
     }
-  }, [todos,tempTodo]);
+  }, [todos, tempTodo]);
 
+  const queryClient = useQueryClient();
+  const { mutate, isError } = useMutation({
+    mutationFn: createTodo,
+    onMutate: async (newTodo) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      const prevTodos = queryClient.getQueryData(["todos"]);
+      queryClient.setQueryData(["todos"], (old: Todo[]) => [
+        ...old,
+        { id: Date.now(), ...newTodo },
+      ]);
 
-  const onAddTodo = async (newTodo: Omit<Todo, 'id'>): Promise<void> => {
+      return { prevTodos };
+    },
+  });
+
+  const onAddTodo = async (newTodo: TodoCreate): Promise<void> => {
     try {
-      const createdTodo = await createTodo(newTodo);
-      setTodos(currentTodos => [...currentTodos, createdTodo]);
+      mutate(newTodo);
+      notify("Todo was created successfully");
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!normalizedTitle) {
-      // setErrorTodos(ErrorType.EmptyTitle);
-
+      notifyError("Todo title cannot be empty");
       return;
     }
 
@@ -58,22 +82,30 @@ const TodoForm: React.FC<Props> = props => {
       setTodoTitle("");
     } catch (error) {
       console.error(error);
+      notifyError("Failed to create new todo");
     } finally {
       setTempTodo(null);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        ref={inputNameRef}
-        type="text"
-        className="w-[800px] border border-gray-800 rounded-xl p-4 text-xl"
-        placeholder="new todo"
-        value={todoTitle}
-        onChange={(event) => setTodoTitle(event.target.value)}
-      />
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        <input
+          ref={inputNameRef}
+          type="text"
+          className={cn(
+            "w-[800px] border border-gray-800 rounded-xl p-4 text-xl",
+            { "cursor-wait animate-pulse": !!tempTodo }
+          )}
+          placeholder="new todo"
+          value={todoTitle}
+          onChange={(event) => setTodoTitle(event.target.value)}
+          disabled={!!tempTodo}
+        />
+      </form>
+      {isError && notifyError("Failed to create new todo")}
+    </>
   );
 };
 
