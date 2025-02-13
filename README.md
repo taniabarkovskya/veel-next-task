@@ -1,10 +1,15 @@
 # Todo App
 
-This is a simple Todo application built with [Next.js](https://nextjs.org/) using the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/). The app allows users to:
+This is a simple Todo application built with [Next.js](https://nextjs.org/) using the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/). You can also check out demo [here](veel-next-task.vercel.app)!
+
+The app allows users to:
 
 - Fetch and display a list of todos
 - Add a new todo
 - Delete a todo
+- Update todo status
+- Edit todo title
+
 
 ## Technologies Used
 
@@ -64,6 +69,7 @@ The app interacts with the JSONPlaceholder API using the following endpoints:
 - **Fetch Todos**: `GET https://jsonplaceholder.typicode.com/todos?_limit=10`
 - **Create Todo**: `POST https://jsonplaceholder.typicode.com/todos`
 - **Delete Todo**: `DELETE https://jsonplaceholder.typicode.com/todos/{id}`
+- **Update/Edit Todo**: `DELETE https://jsonplaceholder.typicode.com/todos/{id}`
 
 ## Contributions
 
