@@ -5,10 +5,10 @@ This is a simple Todo application built with [Next.js](https://nextjs.org/) usin
 The app allows users to:
 
 - Fetch and display a list of todos
-- Add a new todo
-- Delete a todo
-- Update todo status
-- Edit todo title
+- Add a new todo (input field)
+- Delete a todo (button 'x')
+- Update todo status (checkbox)
+- Edit todo title (double click)
 
 
 ## Technologies Used
