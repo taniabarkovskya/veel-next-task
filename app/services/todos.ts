@@ -4,6 +4,10 @@ import { TodoCreate } from "../types/TodoCreate";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
+if (!BASE_URL) {
+  throw new Error("Environment variable NEXT_PUBLIC_API_URL is missing!");
+}
+
 export async function getTodos(): Promise<Todo[]> {
   try {
     const response = await axios.get(`${BASE_URL}?_limit=10`);

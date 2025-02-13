@@ -6,21 +6,17 @@ import { Slide, ToastContainer, toast } from "react-toastify";
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useState } from "react";
 import { getTodos } from "./services/todos";
-import { Todo } from "./types/Todo";
 import TodoForm from "./components/TodoForm";
 import TodosList from "./components/TodosList";
 
 export default function Home() {
-  const [tempTodo, setTempTodo] = useState<Todo | null>(null);
-
   const { data, isLoading, isError } = useQuery({
     queryKey: ["todos"],
     queryFn: getTodos,
   });
 
-  const notify = (text: string ) =>
+  const notify = (text: string) =>
     toast.success(text, {
       position: "bottom-right",
       autoClose: 3000,
@@ -32,40 +28,31 @@ export default function Home() {
       theme: "light",
       transition: Slide,
     });
-  
-    const notifyError = (text: string ) =>
-      toast.error(text, {
-        position: "bottom-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Slide,
-      });
+
+  const notifyError = (text: string) =>
+    toast.error(text, {
+      position: "bottom-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Slide,
+    });
 
   return (
     <div className="flex justify-center items-center flex-col mt-10 gap-8">
       <h1 className="text-8xl font-bold text-gray-800">Todos</h1>
-      <TodoForm
-        todos={data}
-        tempTodo={tempTodo}
-        setTempTodo={setTempTodo}
-        notify={notify}
-        notifyError={notifyError}
-      />
+      <TodoForm todos={data} notify={notify} notifyError={notifyError} />
       {isLoading ? (
         <Skeleton height={60} width={800} count={10} borderRadius={12} />
       ) : (
-        <TodosList
-          todos={data}
-            tempTodo={tempTodo}
-            notify={notify}
-            notifyError={notifyError}
-        />
+        <TodosList todos={data} notify={notify} notifyError={notifyError} />
       )}
+
+      {!data?.length && <p className="text-2xl font-semibold text-gray-800">No todos yet{":("}</p> }
       {isError && notifyError("Failed to get todos")}
       <ToastContainer
         position="bottom-right"

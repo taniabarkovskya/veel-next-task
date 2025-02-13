@@ -8,17 +8,19 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   todos: Todo[] | undefined;
-  tempTodo: Todo | null;
   notify: (text: string) => Id;
   notifyError: (text: string) => Id;
 };
 
 const TodosList: React.FC<Props> = (props) => {
-  const { todos, tempTodo, notify, notifyError } = props;
+  const { todos, notify, notifyError } = props;
 
   const queryClient = useQueryClient();
-  const { mutate, isError } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: deleteTodo,
+    onSuccess: () => {
+      notify("Todo was deleted successfully");
+    },
     onMutate: async (todoId) => {
       await queryClient.cancelQueries({ queryKey: ["todos"] });
       const prevTodos = queryClient.getQueryData(["todos"]);
@@ -28,16 +30,14 @@ const TodosList: React.FC<Props> = (props) => {
 
       return { prevTodos };
     },
+    onError: (error, todoId, context) => {
+      queryClient.setQueryData(["todos"], context?.prevTodos);
+      notifyError("Failed to delete todo");
+    },
   });
 
   const handleDelete = async (todoId: number) => {
-    try {
-      mutate(todoId);
-      notify("Todo was deleted successfully");
-    } catch (error) {
-      console.error(error);
-      notifyError("Failed to delete todo")
-    }
+    mutate(todoId);
   };
 
   return (
@@ -50,6 +50,7 @@ const TodosList: React.FC<Props> = (props) => {
               {
                 "bg-green-100": todo.completed,
                 "bg-pink-100": !todo.completed,
+                "opacity-50 cursor-wait animate-pulse": isPending,
               }
             )}
             key={todo.id}
@@ -62,31 +63,13 @@ const TodosList: React.FC<Props> = (props) => {
               onClick={() => {
                 handleDelete(todo.id);
               }}
+              disabled={isPending}
             >
               x
             </button>
           </li>
         ))}
-        {tempTodo && (
-          <li
-            className={cn(
-              "w-[800px] flex gap-10 justify-between items-center text-xl mb-3 p-4 rounded-xl hover:scale-105 transition duration-300 ease-in-out animate-pulse opacity-50",
-              {
-                "bg-green-100": tempTodo.completed,
-                "bg-pink-100": !tempTodo.completed,
-              }
-            )}
-          >
-            <span className="text-gray-600 transition duration-300 ease-in-out">
-              {tempTodo.title}
-            </span>
-            <button className="w-6 h-6 flex items-center justify-center border border-black rounded-full pb-1 text-m transition duration-300 ease-in-out">
-              x
-            </button>
-          </li>
-        )}
       </ul>
-      {isError && notifyError("Failed to delete todo")}
     </>
   );
 };
