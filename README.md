@@ -1,6 +1,6 @@
 # Todo App
 
-This is a simple Todo application built with [Next.js](https://nextjs.org/) using the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/). You can also check out demo [here](veel-next-task.vercel.app)!
+This is a simple Todo application built with [Next.js](https://nextjs.org/) using the [JSONPlaceholder API](https://jsonplaceholder.typicode.com/). You can also check out demo [here](https://veel-next-task.vercel.app/)!
 
 The app allows users to:
 
