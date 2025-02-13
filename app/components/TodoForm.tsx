@@ -77,12 +77,12 @@ const TodoForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form className="w-full" onSubmit={handleSubmit}>
         <input
           ref={inputNameRef}
           type="text"
           className={cn(
-            "w-[800px] border border-gray-800 rounded-xl p-4 text-xl",
+            "w-full shrink-0 border border-gray-800 rounded-xl p-4 text-md md:text-xl",
             { "opacity-50 cursor-wait animate-pulse": isPending }
           )}
           placeholder="new todo"

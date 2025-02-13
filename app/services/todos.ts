@@ -19,7 +19,7 @@ export async function getTodos(): Promise<Todo[]> {
 }
 
 export async function deleteTodo(todoId: number): Promise<void> {
-  try{
+  try {
     await axios.delete(`${BASE_URL}/${todoId}`);
   } catch (error) {
     console.error(error);
@@ -38,5 +38,23 @@ export async function createTodo(newTodo: TodoCreate) {
   } catch (error) {
     console.error(error);
     throw new Error("Failed to create new todo");
+  }
+}
+
+export async function updateTodo({ id, title, userId, completed }: Todo) {
+  try {
+    const response = await axios.patch(
+      `${BASE_URL}/${id}`,
+      { id, title, userId, completed },
+      {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to update todo");
   }
 }
