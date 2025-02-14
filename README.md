@@ -69,7 +69,7 @@ The app interacts with the JSONPlaceholder API using the following endpoints:
 - **Fetch Todos**: `GET https://jsonplaceholder.typicode.com/todos?_limit=10`
 - **Create Todo**: `POST https://jsonplaceholder.typicode.com/todos`
 - **Delete Todo**: `DELETE https://jsonplaceholder.typicode.com/todos/{id}`
-- **Update/Edit Todo**: `DELETE https://jsonplaceholder.typicode.com/todos/{id}`
+- **Update/Edit Todo**: `PATCH https://jsonplaceholder.typicode.com/todos/{id}`
 
 ## Contributions
 
