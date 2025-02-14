@@ -73,7 +73,7 @@ export default function Home() {
         />
       )}
 
-      {!data?.length && (
+      {visibleTodos?.length && (
         <p className="text-2xl font-semibold text-gray-800">
           No todos yet{":("}
         </p>
