@@ -32,8 +32,8 @@ Ensure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/todo-app.git
-   cd todo-app
+   git clone https://github.com/...
+   cd veel-next-task
    ```
 2. Install dependencies:
    ```bash
